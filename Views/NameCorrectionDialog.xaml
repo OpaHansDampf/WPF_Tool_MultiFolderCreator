@@ -46,12 +46,10 @@
                 Width="75"
                 Height="23"
                 Margin="0,0,10,0"
-                Click="OkButton_Click"
                 Content="OK" />
             <Button
                 Width="75"
                 Height="23"
-                Click="CancelButton_Click"
                 Content="Abbrechen" />
         </StackPanel>
     </Grid>
