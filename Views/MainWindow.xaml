@@ -1,16 +1,19 @@
 ﻿<Window
+    x:Class="WPF_Tool_MultiFolderCreator.Views.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:av="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:WPF_Tool_MultiFolderCreator"
     xmlns:localVM="clr-namespace:WPF_Tool_MultiFolderCreator.ViewModels"
-    xmlns:av="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="av"
-    x:Class="WPF_Tool_MultiFolderCreator.Views.MainWindow"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="Ordner-Generator"
     Width="600"
     Height="400"
-    WindowStartupLocation="CenterScreen">
-
-
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="av">
+    <Window.DataContext>
+        <localVM:MainViewModel />
+    </Window.DataContext>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="40" />
@@ -20,41 +23,42 @@
         </Grid.RowDefinitions>
 
         <Button
-            x:Name="bt_SelectCSV"
+            x:Name="btn_SelectCsvFile"
             Width="120"
             Margin="10"
             HorizontalAlignment="Left"
-            
+            Command="{Binding SelectCsvFileCommand}"
             Content="CSV-Datei auswählen" />
 
         <TextBlock
-            x:Name="CsvPathText"
+            x:Name="tblock_SelectedCsvFilePath"
             Grid.Row="0"
             Margin="140,10,10,10"
-            VerticalAlignment="Center" />
+            VerticalAlignment="Center"
+            Text="{Binding CsvPath}" />
 
         <Button
-            x:Name="FolderButton"
+            x:Name="btn_SelectTargetFolder"
             Grid.Row="1"
             Width="120"
             Margin="10"
             HorizontalAlignment="Left"
-            
+            Command="{Binding SelectTragetFolderCommand}"
             Content="Zielordner auswählen" />
 
         <TextBlock
-            x:Name="FolderPathText"
+            x:Name="tblock_CreateFolders"
             Grid.Row="1"
             Margin="140,10,10,10"
             VerticalAlignment="Center" />
 
         <Button
-            x:Name="CreateButton"
+            x:Name="btn_CreateFolders"
             Grid.Row="2"
             Width="120"
             Margin="10"
             HorizontalAlignment="Left"
-            
+            Command="{Binding CreatedFolders}"
             Content="Ordner erstellen" />
 
         <TextBox

@@ -13,8 +13,8 @@ namespace WPF_Tool_MultiFolderCreator.Views
 {
     public partial class MainWindow : Window
     {
-        private string? _csvPath;
-        private string? _targetPath;
+        //private string? _csvPath;
+        //private string? _targetPath;
 
         public MainWindow()
         {
