@@ -1,0 +1,8 @@
+﻿<Application
+    x:Class="WPF_Tool_MultiFolderCreator.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:WPF_Tool_MultiFolderCreator"
+    StartupUri="/Views/MainWindow.xaml">
+    <Application.Resources />
+</Application>
