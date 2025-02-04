@@ -214,13 +214,17 @@ namespace WPF_Tool_MultiFolderCreator.ViewModels
         private async Task ShowSummaryAsync()
         {
             await ShowMessageAsync(
-                $"Verarbeitung abgeschlossen!\n" +
-                $"Erstellte Hauptordner: {CreatedFolders}\n" +
-                $"Erstellte Unterordner: {CreatedSubFolders}\n" +
-                $"Existierende Hauptordner: {ExistingFolders}\n" +
-                $"Existierende Unterordner: {ExistingSubFolders}\n" +
-                $"Korrigierte Namen: {CorrectedNames}");
+                    $"📁 Verarbeitung abgeschlossen!\n\n" +
+                    $"└─ Hauptordner\n" +
+                    $"   ├─ Erstellt: {CreatedFolders}\n" +
+                    $"   └─ Existierend: {ExistingFolders}\n\n" +
+                    $"└─ Unterordner\n" +
+                    $"   ├─ Erstellt: {CreatedSubFolders}\n" +
+                    $"   └─ Existierend: {ExistingSubFolders}\n\n" +
+                    $"└─ Korrekturen\n" +
+                    $"   └─ {CorrectedNames}");
         }
+        
 
         private async Task ShowMessageAsync(string m)
         {
