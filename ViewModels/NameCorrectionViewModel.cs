@@ -92,7 +92,8 @@ namespace WPF_Tool_MultiFolderCreator.ViewModels
         private bool CanAcceptName()
         {
             return !string.IsNullOrWhiteSpace(UserInput) &&
-                   !IsProcessing;
+                   !IsProcessing &&
+                   !_folderNameModel.HasInvalidChars(UserInput);
         }
 
         partial void OnCloseDialogActionChanged(Action<bool?>? value)
