@@ -47,10 +47,11 @@
             Content="Zielordner auswählen" />
 
         <TextBlock
-            x:Name="tblock_CreateFolders"
+            x:Name="tbl_CreateFolders"
             Grid.Row="1"
             Margin="140,10,10,10"
-            VerticalAlignment="Center" />
+            VerticalAlignment="Center"
+            Text="{Binding TargetPath}" />
 
         <Button
             x:Name="btn_CreateFolders"
@@ -62,7 +63,7 @@
             Content="Ordner erstellen" />
 
         <TextBox
-            x:Name="StatusTextBox"
+            x:Name="tb_Status"
             Grid.Row="3"
             Margin="10"
             IsReadOnly="True"

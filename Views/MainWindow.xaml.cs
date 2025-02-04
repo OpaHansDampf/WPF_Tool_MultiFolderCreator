@@ -219,8 +219,8 @@ namespace WPF_Tool_MultiFolderCreator.Views
         #endregion
         private void LogStatus(string message)
         {
-            StatusTextBox.AppendText($"{message}{Environment.NewLine}");
-            StatusTextBox.ScrollToEnd();
+            tb_Status.AppendText($"{message}{Environment.NewLine}");
+            tb_Status.ScrollToEnd();
         }
     }
 }
