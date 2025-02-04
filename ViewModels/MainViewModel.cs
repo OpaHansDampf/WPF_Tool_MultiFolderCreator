@@ -12,7 +12,6 @@ using Microsoft.Win32;
 using System.IO;
 using System.Windows;
 
-
 namespace WPF_Tool_MultiFolderCreator.ViewModels
 {
     public partial class MainViewModel : ViewModelBase
@@ -211,8 +210,6 @@ namespace WPF_Tool_MultiFolderCreator.ViewModels
                 return (false, string.Empty, string.Empty);
             }
         }
-
-        
 
         private async Task ShowSummaryAsync()
         {

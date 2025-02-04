@@ -59,7 +59,7 @@
             Width="120"
             Margin="10"
             HorizontalAlignment="Left"
-            Command="{Binding CreatedFolders}"
+            Command="{Binding ProcessCsvCommand}"
             Content="Ordner erstellen" />
 
         <TextBox

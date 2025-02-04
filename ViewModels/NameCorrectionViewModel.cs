@@ -25,9 +25,6 @@ namespace WPF_Tool_MultiFolderCreator.ViewModels
         private string correctedName = string.Empty;
 
         [ObservableProperty]
-        private bool canAccept = true;
-
-        [ObservableProperty]
         private bool isProcessing;
 
         [ObservableProperty]
@@ -51,19 +48,26 @@ namespace WPF_Tool_MultiFolderCreator.ViewModels
                     throw new InvalidOperationException("Name darf nicht leer sein");
                 }
 
-                await Task.Delay(100); //Simulierter Task
+                //await Task.Delay(100); //Simulierter Task
 
-                CorrectedName = UserInput;
-
-                if (_folderNameModel.HasInvalidChars(CorrectedName))
+                // Prüfe den vom User eingegebenen Namen auf ungültige Zeichen
+                if (_folderNameModel.HasInvalidChars(UserInput))
                 {
-                    // Falls die Benutzereingabe immer noch ungültige Zeichen enthält,
-                    // automatisch korrigieren
+                    // Zeige dem User eine MessageBox mit Hinweis
                     await Application.Current.Dispatcher.InvokeAsync(() =>
                     {
-                        CorrectedName = _folderNameModel.AutoCorrectFolderName(CorrectedName);
+                        MessageBox.Show(
+                            "Der eingegebene Name enthält ungültige Zeichen. " +
+                            "Bitte verwenden Sie nur gültige Zeichen.",
+                            "Ungültige Zeichen",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Warning);
                     });
+                    UserInput = _folderNameModel.AutoCorrectFolderName(UserInput);
+                    return;
                 }
+                CorrectedName = UserInput;
+
                 // Sichere Ausführung der CloseAction
                 await Application.Current.Dispatcher.InvokeAsync(() => // TODO: Methode machen 1/2
                 {
@@ -88,8 +92,7 @@ namespace WPF_Tool_MultiFolderCreator.ViewModels
         private bool CanAcceptName()
         {
             return !string.IsNullOrWhiteSpace(UserInput) &&
-                   !IsProcessing &&
-                   CanAccept;
+                   !IsProcessing;
         }
 
         partial void OnCloseDialogActionChanged(Action<bool?>? value)
@@ -119,9 +122,15 @@ namespace WPF_Tool_MultiFolderCreator.ViewModels
             var dialog = new Views.NameCorrectionDialog(vm);
 
             // Setze die CloseAction auf dem UI-Thread
-            vm.CloseDialogAction = result => dialog.DialogResult = result; //WayToGo um eine Property als Action nutzen zu können
+            vm.CloseDialogAction = result => dialog.DialogResult = result;
 
-            if (await Task.Run(() => dialog.ShowDialog()) == true)
+            bool? result = null;
+            await Application.Current.Dispatcher.InvokeAsync(() =>
+            {
+                result = dialog.ShowDialog();
+            });
+
+            if (result == true)
             {
                 return vm.CorrectedName;
             }
