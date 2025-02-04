@@ -55,7 +55,7 @@ namespace WPF_Tool_MultiFolderCreator.ViewModels
                 // Setzen der Properties - diese aktualisieren automatisch die UI
                 CsvPath = openFileDialog.FileName;
                 //tblock_SelectedCsvFilePath ??????????????????????????
-                StatusMessage += $"CSV-Datei ausgewählt: {CsvPath}";
+                LogStatus($"CSV-Datei ausgewählt: {CsvPath}");
             }
         }
 
@@ -71,7 +71,7 @@ namespace WPF_Tool_MultiFolderCreator.ViewModels
             if (saveFileDialog.ShowDialog() == true)
             {
                 TargetPath = Path.GetDirectoryName(saveFileDialog.FileName) ?? string.Empty;
-                StatusMessage += $"Zielordner ausgewählt: {TargetPath}";
+                LogStatus($"Zielordner ausgewählt: {TargetPath}");
             }
         }
 
@@ -224,7 +224,6 @@ namespace WPF_Tool_MultiFolderCreator.ViewModels
                     $"└─ Korrekturen\n" +
                     $"   └─ {CorrectedNames}");
         }
-        
 
         private async Task ShowMessageAsync(string m)
         {
@@ -234,7 +233,54 @@ namespace WPF_Tool_MultiFolderCreator.ViewModels
 
         private void LogStatus(string message)
         {
-            StatusMessage += $"{DateTime.Now:HH:mm:ss}: {message}{Environment.NewLine}";
+            string formattedMessage = FormatLogMessage(message);
+            StatusMessage += formattedMessage;
+        }
+
+        private string FormatLogMessage(string message)
+        {
+            string timestamp = $"{DateTime.Now:HH:mm:ss}";
+            string prefix;
+            string icon;
+
+            // Message-Typ bestimmen und entsprechend formatieren
+            if (message.StartsWith("CSV-Datei ausgewählt:") || message.StartsWith("Zielordner ausgewählt:"))
+            {
+                // Pfad-Informationen ohne Baum
+                return $"{timestamp}: {message}{Environment.NewLine}";
+            }
+
+            if (message.Contains("Hauptordnername korrigiert:"))
+            {
+                icon = "↺";
+                prefix = "├─";
+                message = message.Replace("Hauptordnername korrigiert:", "Umbenannt:");
+                return $"{timestamp}: {prefix} {icon} {message}{Environment.NewLine}";
+            }
+
+            if (message.Contains("Hauptordner erstellt:"))
+            {
+                icon = "📁";
+                prefix = "├─";
+            }
+            else if (message.Contains("Unterordner erstellt:"))
+            {
+                icon = "📂";
+                prefix = "│  ├─";
+                // Pfad kürzen - nur den letzten Teil anzeigen
+                var parts = message.Split('/');
+                if (parts.Length > 1)
+                {
+                    message = $"Unterordner: {parts.Last()}";
+                }
+            }
+            else
+            {
+                icon = "•";
+                prefix = "├─";
+            }
+
+            return $"{timestamp}: {prefix} {icon} {message}{Environment.NewLine}";
         }
 
         public MainViewModel()
