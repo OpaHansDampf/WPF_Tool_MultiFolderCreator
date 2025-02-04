@@ -7,7 +7,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace WPF_Tool_MultiFolderCreator.ViewModels
 {
-    public abstract class ViewModelBase : ObservableObject
+    public abstract class ViewModelBase : ObservableRecipient
     {
         public virtual void Initialize() { }
     }
