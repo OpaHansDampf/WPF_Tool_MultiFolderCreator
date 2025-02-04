@@ -55,7 +55,7 @@ namespace WPF_Tool_MultiFolderCreator.ViewModels
                 // Setzen der Properties - diese aktualisieren automatisch die UI
                 CsvPath = openFileDialog.FileName;
                 //tblock_SelectedCsvFilePath ??????????????????????????
-                StatusMessage = $"CSV-Datei ausgewählt: {CsvPath}";
+                StatusMessage += $"CSV-Datei ausgewählt: {CsvPath}";
             }
         }
 
@@ -71,7 +71,7 @@ namespace WPF_Tool_MultiFolderCreator.ViewModels
             if (saveFileDialog.ShowDialog() == true)
             {
                 TargetPath = Path.GetDirectoryName(saveFileDialog.FileName) ?? string.Empty;
-                StatusMessage = $"Zielordner ausgewählt: {TargetPath}";
+                StatusMessage += $"Zielordner ausgewählt: {TargetPath}";
             }
         }
 

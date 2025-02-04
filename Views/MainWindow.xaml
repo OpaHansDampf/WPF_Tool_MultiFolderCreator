@@ -68,6 +68,7 @@
             Margin="10"
             IsReadOnly="True"
             TextWrapping="Wrap"
-            VerticalScrollBarVisibility="Auto" />
+            VerticalScrollBarVisibility="Auto"
+            Text="{Binding StatusMessage}"/>
     </Grid>
 </Window>
