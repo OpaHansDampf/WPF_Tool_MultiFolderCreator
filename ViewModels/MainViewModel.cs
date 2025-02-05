@@ -13,6 +13,7 @@ using System.IO;
 using System.Windows;
 using CommunityToolkit.Mvvm.Messaging;
 using WPF_Tool_MultiFolderCreator.Services.Logging;
+using System.Windows.Media;
 
 namespace WPF_Tool_MultiFolderCreator.ViewModels
 {
@@ -160,7 +161,7 @@ namespace WPF_Tool_MultiFolderCreator.ViewModels
                 if (correctedName != originalName)
                 {
                     CorrectedNames++;
-                    SendLogMessage(LogEntryType.SubFolderCreated, correctedName);
+                    SendLogMessage(LogEntryType.NameCorrected, string.Empty, originalName, correctedName);
                 }
 
                 var fullPath = Path.Combine(mainPath, correctedName);
@@ -173,7 +174,7 @@ namespace WPF_Tool_MultiFolderCreator.ViewModels
                 else
                 {
                     ExistingSubFolders++;
-                    SendLogMessage(LogEntryType.SubFolderExists, correctedName);
+                    SendLogMessage(LogEntryType.SubFolderCreated, correctedName);
                 }
             }
             catch (OperationCanceledException)
@@ -190,7 +191,7 @@ namespace WPF_Tool_MultiFolderCreator.ViewModels
                 if (correctedName != originalName)
                 {
                     CorrectedNames++;
-                    //SendLogMessage(LogEntryType.MainFolderCreated, "1");
+                    SendLogMessage(LogEntryType.NameCorrected, string.Empty, originalName, correctedName);
                 }
 
                 var fullPath = Path.Combine(TargetPath, correctedName);
