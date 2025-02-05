@@ -8,19 +8,20 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using WPF_Tool_MultiFolderCreator;
 using WPF_Tool_MultiFolderCreator.Views;
+using WPF_Tool_MultiFolderCreator.ViewModels;
 
 namespace WPF_Tool_MultiFolderCreator.Views
 {
     public partial class MainWindow : Window
     {
-        //private string? _csvPath;
-        //private string? _targetPath;
-
-        public MainWindow()
+        public MainWindow(MainViewModel viewModel)
         {
             InitializeComponent();
+            DataContext = viewModel;
         }
+
         #region old-stuff
+
         //private bool HasInvalidChars(string folderName)
         //{
         //    // Erweiterte Liste von ungültigen Zeichen
@@ -216,13 +217,13 @@ namespace WPF_Tool_MultiFolderCreator.Views
         //        MessageBox.Show($"Fehler beim Erstellen der Ordner: {ex.Message}", "Fehler", MessageBoxButton.OK, MessageBoxImage.Error);
         //    }
         //}
-        #endregion
-        private void LogStatus(string message)
-        {
-            tb_Status.AppendText($"{message}{Environment.NewLine}");
-            tb_Status.ScrollToEnd();
-        }
+
+        //private void LogStatus(string message)
+        //{
+        //    tb_Status.AppendText($"{message}{Environment.NewLine}");
+        //    tb_Status.ScrollToEnd();
+        //}
+
+        #endregion old-stuff
     }
 }
-
-

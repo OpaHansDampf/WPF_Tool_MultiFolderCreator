@@ -11,16 +11,22 @@ using WPF_Tool_MultiFolderCreator.Models;
 using Microsoft.Win32;
 using System.IO;
 using System.Windows;
+using CommunityToolkit.Mvvm.Messaging;
+using WPF_Tool_MultiFolderCreator.Services.Logging;
+using System.Windows.Media;
 
 namespace WPF_Tool_MultiFolderCreator.ViewModels
 {
     public partial class MainViewModel : ViewModelBase
     {
-        [ObservableProperty]
-        private string csvPath = string.Empty;
+        private readonly IMessenger _messenger;
+        private readonly LoggingService _loggingService;
 
         [ObservableProperty]
         private string statusMessage = string.Empty;
+
+        [ObservableProperty]
+        private string csvPath = string.Empty;
 
         [ObservableProperty]
         private string targetPath = string.Empty;
@@ -55,7 +61,7 @@ namespace WPF_Tool_MultiFolderCreator.ViewModels
                 // Setzen der Properties - diese aktualisieren automatisch die UI
                 CsvPath = openFileDialog.FileName;
                 //tblock_SelectedCsvFilePath ??????????????????????????
-                LogStatus($"CSV-Datei ausgewählt: {CsvPath}");
+                SendLogMessage(LogEntryType.CsvSelected, CsvPath);
             }
         }
 
@@ -71,7 +77,7 @@ namespace WPF_Tool_MultiFolderCreator.ViewModels
             if (saveFileDialog.ShowDialog() == true)
             {
                 TargetPath = Path.GetDirectoryName(saveFileDialog.FileName) ?? string.Empty;
-                LogStatus($"Zielordner ausgewählt: {TargetPath}");
+                SendLogMessage(LogEntryType.TargetSelected, TargetPath);
             }
         }
 
@@ -155,7 +161,7 @@ namespace WPF_Tool_MultiFolderCreator.ViewModels
                 if (correctedName != originalName)
                 {
                     CorrectedNames++;
-                    LogStatus($"Unterordner erstellt: {originalName} -> {correctedName}");
+                    SendLogMessage(LogEntryType.NameCorrected, string.Empty, originalName, correctedName);
                 }
 
                 var fullPath = Path.Combine(mainPath, correctedName);
@@ -163,17 +169,17 @@ namespace WPF_Tool_MultiFolderCreator.ViewModels
                 {
                     Directory.CreateDirectory(fullPath);
                     CreatedSubFolders++;
-                    LogStatus($"Unterordner erstellt: {mainFolder}/{correctedName}");
+                    SendLogMessage(LogEntryType.SubFolderCreated, correctedName);
                 }
                 else
                 {
                     ExistingSubFolders++;
-                    LogStatus($"Unterordner existiert bereits: {mainFolder}/{correctedName}");
+                    SendLogMessage(LogEntryType.SubFolderCreated, correctedName);
                 }
             }
             catch (OperationCanceledException)
             {
-                LogStatus("Vorgang abgeborchen");
+                SendLogMessage(LogEntryType.Error, "Vorgang abgeborchen");
             }
         }
 
@@ -185,7 +191,7 @@ namespace WPF_Tool_MultiFolderCreator.ViewModels
                 if (correctedName != originalName)
                 {
                     CorrectedNames++;
-                    LogStatus($"Hauptordnername korrigiert: {originalName} -> {correctedName}");
+                    SendLogMessage(LogEntryType.NameCorrected, string.Empty, originalName, correctedName);
                 }
 
                 var fullPath = Path.Combine(TargetPath, correctedName);
@@ -194,19 +200,19 @@ namespace WPF_Tool_MultiFolderCreator.ViewModels
                 {
                     Directory.CreateDirectory(fullPath);
                     CreatedFolders++;
-                    LogStatus($"Hauptordner erstellt: {correctedName}");
+                    SendLogMessage(LogEntryType.MainFolderCreated, correctedName);
                 }
                 else
                 {
                     ExistingFolders++;
-                    LogStatus($"Hauptordner existiert bereits: {correctedName}");
+                    SendLogMessage(LogEntryType.MainFolderExists, correctedName);
                 }
 
                 return (true, fullPath, correctedName);
             }
             catch (OperationCanceledException)
             {
-                LogStatus("Vorgang abgebrochen.");
+                SendLogMessage(LogEntryType.Error, "Vorgang abgeborchen");
                 return (false, string.Empty, string.Empty);
             }
         }
@@ -231,66 +237,35 @@ namespace WPF_Tool_MultiFolderCreator.ViewModels
             MessageBox.Show(m));
         }
 
-        private void LogStatus(string message)
+        private void SendLogMessage(LogEntryType type, string message, params string[] parameters)
         {
-            string formattedMessage = FormatLogMessage(message);
-            StatusMessage += formattedMessage;
+            _messenger.Send(new LogMessage(type, message, parameters));
         }
 
-        private string FormatLogMessage(string message)
+     
+
+        // Hauptkonstruktor
+        public MainViewModel(IMessenger messenger, LoggingService loggingService)
+            : base(messenger)
         {
-            string timestamp = $"{DateTime.Now:HH:mm:ss}";
-            string prefix;
-            string icon;
+            _messenger = messenger;
+            _loggingService = loggingService;
 
-            // Message-Typ bestimmen und entsprechend formatieren
-            if (message.StartsWith("CSV-Datei ausgewählt:") || message.StartsWith("Zielordner ausgewählt:"))
+            // Log-Updates abonnieren
+            _loggingService.PropertyChanged += (s, e) =>
             {
-                // Pfad-Informationen ohne Baum
-                return $"{timestamp}: {message}{Environment.NewLine}";
-            }
-
-            if (message.Contains("Hauptordnername korrigiert:"))
-            {
-                icon = "↺";
-                prefix = "├─";
-                message = message.Replace("Hauptordnername korrigiert:", "Umbenannt:");
-                return $"{timestamp}: {prefix} {icon} {message}{Environment.NewLine}";
-            }
-
-            if (message.Contains("Hauptordner erstellt:"))
-            {
-                icon = "📁";
-                prefix = "├─";
-            }
-            else if (message.Contains("Unterordner erstellt:"))
-            {
-                icon = "📂";
-                prefix = "│  ├─";
-                // Pfad kürzen - nur den letzten Teil anzeigen
-                var parts = message.Split('/');
-                if (parts.Length > 1)
+                if (e.PropertyName == nameof(LoggingService.CurrentLog))
                 {
-                    message = $"Unterordner: {parts.Last()}";
+                    StatusMessage = _loggingService.CurrentLog;
                 }
-            }
-            else
-            {
-                icon = "•";
-                prefix = "├─";
-            }
+            };
 
-            return $"{timestamp}: {prefix} {icon} {message}{Environment.NewLine}";
-        }
-
-        public MainViewModel()
-        {
             Initialize();
         }
 
         public override void Initialize()
         {
-            //base.Initialize();
+           // base.Initialize();
             // Sample Data Input //
         }
     }

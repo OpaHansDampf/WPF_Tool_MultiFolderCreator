@@ -8,13 +8,20 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.ComponentModel;
 using System.Windows;
+using CommunityToolkit.Mvvm.Messaging;
+using WPF_Tool_MultiFolderCreator.Services.Logging;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace WPF_Tool_MultiFolderCreator.ViewModels
 {
     public partial class NameCorrectionViewModel : ViewModelBase
     {
         private readonly FolderNameModel _folderNameModel;
+        private readonly IMessenger _messenger;
+        private readonly LoggingService _loggingService;
 
+        [ObservableProperty]
+        private string statusMessage = string.Empty;
         [ObservableProperty]
         private Action<bool?>? closeDialogAction;
 
@@ -31,8 +38,11 @@ namespace WPF_Tool_MultiFolderCreator.ViewModels
         [NotifyCanExecuteChangedFor(nameof(AcceptCommand))]
         private string userInput = string.Empty;
 
-        public NameCorrectionViewModel()
+        public NameCorrectionViewModel(IMessenger messenger, LoggingService loggingService)
+        : base(messenger)
         {
+            _messenger = messenger;
+            _loggingService = loggingService;
             _folderNameModel = new FolderNameModel();
         }
 
@@ -116,8 +126,11 @@ namespace WPF_Tool_MultiFolderCreator.ViewModels
             {
                 return originalName;
             }
+            // Service Locator Pattern verwenden
+            var messenger = App.Services.GetRequiredService<IMessenger>();
+            var loggingService = App.Services.GetRequiredService<LoggingService>();
 
-            var vm = new NameCorrectionViewModel();
+            var vm = new NameCorrectionViewModel(messenger, loggingService);
             vm.Initialize(originalName);
 
             var dialog = new Views.NameCorrectionDialog(vm);

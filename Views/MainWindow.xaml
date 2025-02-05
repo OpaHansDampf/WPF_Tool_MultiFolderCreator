@@ -11,9 +11,7 @@
     Height="400"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="av">
-    <Window.DataContext>
-        <localVM:MainViewModel />
-    </Window.DataContext>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="40" />
@@ -67,8 +65,9 @@
             Grid.Row="3"
             Margin="10"
             IsReadOnly="True"
-            TextWrapping="Wrap"
+            Text="{Binding StatusMessage}"
+            TextWrapping="NoWrap"
             VerticalScrollBarVisibility="Auto"
-            Text="{Binding StatusMessage}"/>
+            HorizontalScrollBarVisibility="Auto"/>
     </Grid>
 </Window>
